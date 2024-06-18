@@ -14,6 +14,6 @@ function SinhVien() {
 
   // phương thức
   this.tinhDiemTrungBinh = function () {
-    return (this.txtDiemToan + this.txtDiemHoa + this.txtDiemLy) / 3
+    return (this.txtDiemToan * 1 + this.txtDiemHoa * 1 + this.txtDiemLy * 1) / 3
   }
 }
