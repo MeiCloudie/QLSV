@@ -35,3 +35,9 @@ formQLSV.onsubmit = function (event) {
   // phương thức reset
   formQLSV.reset()
 }
+
+// Nút Reset
+let btnReset = document.getElementById("btnReset")
+btnReset.onclick = function () {
+  formQLSV.reset()
+}
