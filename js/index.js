@@ -13,11 +13,8 @@ let arrSinhVien = getLocalStorage()
 renderArrSinhVien()
 // 3 ==> đưa lên giao diện
 
-// Thêm Sinh Viên
-let formQLSV = document.getElementById("formQLSV")
-formQLSV.onsubmit = function (event) {
-  event.preventDefault()
-
+// getValueSinhVien
+function getValueSinhVien() {
   // sử dụng querySelectorAll
   let arrField = document.querySelectorAll("#formQLSV input, #formQLSV select")
   // khởi tạo một đối tượng từ lớp đối tượng SinhVien
@@ -28,6 +25,21 @@ formQLSV.onsubmit = function (event) {
     let { value, id } = field // txtMaSV // txtTenSV
     sinhVien[id] = value
   }
+  return sinhVien
+}
+
+// function dongBoDuLieu() {
+//   renderArrSinhVien();
+//   saveLocalStorage();
+// }
+
+// Thêm Sinh Viên
+let formQLSV = document.getElementById("formQLSV")
+formQLSV.onsubmit = function (event) {
+  event.preventDefault()
+
+  // Thực hiện chạy getValueSinhVien để lấy dữ liệu từ form
+  let sinhVien = getValueSinhVien()
 
   arrSinhVien.push(sinhVien)
   // lưu trữ mảng đã được thêm 1 phần tử mới vào localStorage
@@ -35,6 +47,7 @@ formQLSV.onsubmit = function (event) {
 
   // hiển thị dữ liệu từ mảng lên giao diện
   renderArrSinhVien()
+  hienThiThongBao("Thêm sinh viên thành công", 3000, "bg-success")
   // phương thức reset
   formQLSV.reset()
 }
@@ -44,7 +57,7 @@ function renderArrSinhVien(arr = arrSinhVien) {
   let content = ""
   for (let sinhVien of arr) {
     // console.log(sinhVien);
-    // sinhVien laf object đang có dữ liệu và không có phương thức tính điểm trung bình
+    // sinhVien là object đang có dữ liệu và không có phương thức tính điểm trung bình (được cho)
     // newSinhVien được khởi tạo từ lớp đối tượng sinhvien có phương thức nhưng không có dữ liệu (được nhận)
     let newSinhVien = new SinhVien()
     Object.assign(newSinhVien, sinhVien)
@@ -61,8 +74,8 @@ function renderArrSinhVien(arr = arrSinhVien) {
       <td>${khSV}</td>
       <td>${diemTrungBinh.toFixed(2)}</td>
       <td>
-        <button class="btn btn-danger">Xoá</button>
-        <button class="btn btn-warning">Sửa</button>
+        <button onclick="deleteSinhVien('${txtMaSV}')" class="btn btn-danger">Xoá</button>
+        <button onclick="getInfoSinhVien('${txtMaSV}')" class="btn btn-warning">Sửa</button>
       </td>
     </tr>
     `
@@ -90,6 +103,100 @@ function getLocalStorage(key = "arrSinhVien") {
   //   return [];
   // }
   return newDataLocal ? newDataLocal : []
+}
+
+// Xoá sinh viên
+function deleteSinhVien(mssv) {
+  // findIndex ==> index ==> -1
+  // find ==> item ==> undefined
+  console.log(mssv)
+  // tìm kiếm vị trí index của phần tử cần xoá
+  let index = arrSinhVien.findIndex((item, index) => {
+    // ==> Object
+    return item.txtMaSV == mssv
+  })
+  if (index != -1) {
+    arrSinhVien.splice(index, 1)
+    renderArrSinhVien()
+    saveLocalStorage()
+    hienThiThongBao("Xoá sinh viên thành công", 3000, "bg-danger")
+  }
+  console.log(arrSinhVien)
+  // sử dụng hàm splice để xoá phần tử khỏi mảng
+}
+
+// Lấy thông tin sinh viên
+function getInfoSinhVien(mssv) {
+  console.log(mssv)
+  // let sinhVien ==> find
+  // đưa dữ liệu lên các input của form
+  let sinhVien = arrSinhVien.find((item, index) => {
+    return item.txtMaSV == mssv
+  })
+  if (sinhVien) {
+    // thao tác đưa dữ liệu lên giao diện
+    let arrField = document.querySelectorAll(
+      "#formQLSV input, #formQLSV select"
+    )
+    for (let item of arrField) {
+      let { id } = item // txtMaSV
+      item.value = sinhVien[id]
+      if (id == "txtMaSV") {
+        item.readOnly = true
+      }
+    }
+    // dom tới input có id txtMaSV và thực hiện ngăn chặn chỉnh sửa
+    // document.getElementById("txtMaSV").readOnly = true;
+  }
+}
+
+// cập nhật sinh viên
+// Thực hiện tạo một lệnh DOM tới button cập nhật và gắn hàm updateSinhVien
+function updateSinhVien() {
+  // thực hiện xử lí lấy dữ liệu từ form (coi lại xử lí thêm sinh viên) ==> nhìn thử thêm sinh viên và update có gì giống nhau ? ==> có thể tách hàm không
+  let sinhVien = getValueSinhVien()
+  // tìm kiếm vị trí của phần tử đang cần chỉnh sửa trong mảng ==> findIndex
+  let index = arrSinhVien.findIndex((item, index) => {
+    return item.txtMaSV == sinhVien.txtMaSV
+  })
+  if (index != -1) {
+    arrSinhVien[index] = sinhVien
+  }
+  // arrSinhVien[index] = newSinhVien
+  // chạy lại render và động bộ dữ liệu với localStorage
+  renderArrSinhVien()
+  saveLocalStorage()
+  hienThiThongBao("Cập nhật sinh viên thành công", 3000, "bg-warning")
+  formQLSV.reset()
+  document.getElementById("txtMaSV").readOnly = false
+  // cho phép input mã SV được thực hiện nhập dữ liệu
+}
+
+// Xử lí khi hàm cần truyền tham số
+// document.querySelector(".btn-info").onclick = function () {
+//   updateSinhVien("abc");
+// };
+
+document.querySelector(".btn-info").onclick = updateSinhVien
+
+// Xử lí thông báo
+function hienThiThongBao(text, duration, className) {
+  Toastify({
+    text,
+    className,
+    duration,
+    // destination: "https://github.com/apvarun/toastify-js",
+    // newWindow: true,
+    close: true,
+    gravity: "top", // `top` or `bottom`
+    position: "left", // `left`, `center` or `right`
+    stopOnFocus: true, // Prevents dismissing of toast on hover
+    // style: {
+    //   // background: "linear-gradient(to right, #00b09b, #96c93d)",
+    //   background: "red",
+    // },
+    backgroundColor: "orange",
+  }).showToast()
 }
 
 // // Các phương thức tương tác với localStorage
