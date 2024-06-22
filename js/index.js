@@ -241,6 +241,25 @@ function hienThiThongBao(text, duration, className) {
   }).showToast()
 }
 
+// Tìm kiếm sinh viên
+document.getElementById("txtSearch").oninput = function (event) {
+  // console.log(event.target.value); // â ==> a
+  // sản phẩm = "Nồi cơm điện" ==> "Noi com dien" ==> 'noi com dien'
+  // keyword = '   noi com dien   ' ==> "   noi com dien   " ==> 'noi com dien'
+  let newKeyWord = removeVietnameseTones(event.target.value)
+    .trim()
+    .toLowerCase()
+  // console.log(newKeyWord);
+  // includes "noi com dien" | "dien"
+  // console.log("noi com dien".includes("di")); // true | false
+  // tên sản phẩm .includes(newKeyWord) ==> true | false
+  let arrFilter = arrSinhVien.filter((item, index) => {
+    let newTenSV = removeVietnameseTones(item.txtTenSV).trim().toLowerCase()
+    return newTenSV.includes(newKeyWord)
+  })
+  renderArrSinhVien(arrFilter)
+}
+
 // // Các phương thức tương tác với localStorage
 // // Phương thức thêm dữ liệu vào localStorage
 // let sinhVienLam = {
