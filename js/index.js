@@ -7,7 +7,8 @@
  * Lưu và lấy dữ liệu được lưu trữ ở localStorage
  * Validation dữ liệu người dùng nhập (Ràng buộc)
  * Tìm kiếm sinh viên
- *
+ * Nếu kiểm tra về độ dài, thì sẽ có một chuỗi trong data-validation="doDai"
+ * Nếu kiểm tra về email, thì sẽ có một chuỗi trong data-validation="email"
  */
 let arrSinhVien = getLocalStorage()
 renderArrSinhVien()
@@ -27,6 +28,9 @@ function getValueSinhVien() {
   for (let field of arrField) {
     // destructuring
     let { value, id } = field // txtMaSV // txtTenSV
+    // thực hiện lấy data-attribute của input
+    let dataValidation = field.getAttribute("data-validation")
+    console.log(dataValidation)
     sinhVien[id] = value
 
     // Thực hiện validation dữ liệu người dùng
@@ -35,7 +39,23 @@ function getValueSinhVien() {
     let theSpanThongBao = theCha.querySelector("span")
     // console.log(theCha.querySelector("span"));
 
-    isValid &= checkEmptyValue(value, theSpanThongBao)
+    let isEmpty = checkEmptyValue(value, theSpanThongBao) // true false
+    isValid &= isEmpty
+    // xử lí nếu dữ liệu rỗng thì sẽ không xử lí bất kỳ hành động nào bên dưới
+    if (!isEmpty) {
+      continue
+    }
+    // if (id == "txtTenSV") {
+    //   isValid &= checkMinMaxValue(value, theSpanThongBao, 6, 10);
+    // }
+    // if (id == "txtEmail") {
+    //   isValid &= checkEmailValue(value, theSpanThongBao);
+    // }
+    if (dataValidation == "doDai") {
+      isValid &= checkMinMaxValue(value, theSpanThongBao, 6, 10)
+    } else if (dataValidation == "email") {
+      isValid &= checkEmailValue(value, theSpanThongBao)
+    }
   }
 
   // thực hiện kiểm tra nếu isValid mang giá trị false thì return và không trả về sinhVien
@@ -175,6 +195,9 @@ function getInfoSinhVien(mssv) {
 function updateSinhVien() {
   // thực hiện xử lí lấy dữ liệu từ form (coi lại xử lí thêm sinh viên) ==> nhìn thử thêm sinh viên và update có gì giống nhau ? ==> có thể tách hàm không
   let sinhVien = getValueSinhVien()
+  if (!sinhVien) {
+    return
+  }
   // tìm kiếm vị trí của phần tử đang cần chỉnh sửa trong mảng ==> findIndex
   let index = arrSinhVien.findIndex((item, index) => {
     return item.txtMaSV == sinhVien.txtMaSV

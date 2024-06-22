@@ -14,3 +14,38 @@ function checkEmptyValue(value, span) {
     return false
   }
 }
+
+// Kiểm tra độ dài ký tự của dữ liệu nhập vào
+// function xử lí kiểm tra độ dài tối thiểu và độ dài tối đa của dữ liệu nhập vào
+//
+function checkMinMaxValue(value, span, min, max) {
+  let doDaiKyTu = value.length // "cát tường" ==>9
+  if (doDaiKyTu >= min && doDaiKyTu <= max) {
+    // trường hợp đúng
+    span.innerHTML = ""
+    return true
+  } else {
+    span.innerHTML = `Vui lòng nhập tối thiểu ${min} ký tự và tối đa ${max} ký tự`
+    return false
+  }
+}
+
+// Kiểm tra email người dùng
+function checkEmailValue(value, span) {
+  let regexEmail =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  // let regexFacebookLink =
+  //   /^(https?:\/\/)?(www\.)?facebook\.com\/[a-zA-Z0-9(\.\?)?]/;
+
+  // phương thức test ==> value ==> true | false
+  let isValid = regexEmail.test(value)
+  if (isValid) {
+    // Đây là trường hợp khi dữ liệu người dùng là email và qua được phương thức test
+    span.innerHTML = ""
+    return true
+  } else {
+    // Đây là trường hợp khi dữ liệu người dùng ko phải email
+    span.innerHTML = "Vui lòng nhập đúng định dạng email"
+    return false
+  }
+}
