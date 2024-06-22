@@ -19,11 +19,28 @@ function getValueSinhVien() {
   let arrField = document.querySelectorAll("#formQLSV input, #formQLSV select")
   // khởi tạo một đối tượng từ lớp đối tượng SinhVien
   let sinhVien = new SinhVien()
+  let isValid = true
+  // Phép toán nhị phân true (1), false(0)
+  // true & false ==> 1 & 0 ==> 0(false)
+  // true & true ==> 1 & 1 ==> 1 (true)
 
   for (let field of arrField) {
     // destructuring
     let { value, id } = field // txtMaSV // txtTenSV
     sinhVien[id] = value
+
+    // Thực hiện validation dữ liệu người dùng
+    // Thực hiện từ lệnh DOM đang có tới các input và select, sẽ sử dụng phương thức parentElement để DOM tới thẻ cha gần nhất
+    let theCha = field.parentElement
+    let theSpanThongBao = theCha.querySelector("span")
+    // console.log(theCha.querySelector("span"));
+
+    isValid &= checkEmptyValue(value, theSpanThongBao)
+  }
+
+  // thực hiện kiểm tra nếu isValid mang giá trị false thì return và không trả về sinhVien
+  if (!isValid) {
+    return
   }
   return sinhVien
 }
@@ -40,6 +57,9 @@ formQLSV.onsubmit = function (event) {
 
   // Thực hiện chạy getValueSinhVien để lấy dữ liệu từ form
   let sinhVien = getValueSinhVien()
+  if (!sinhVien) {
+    return
+  }
 
   arrSinhVien.push(sinhVien)
   // lưu trữ mảng đã được thêm 1 phần tử mới vào localStorage
@@ -166,7 +186,6 @@ function updateSinhVien() {
   // chạy lại render và động bộ dữ liệu với localStorage
   renderArrSinhVien()
   saveLocalStorage()
-  hienThiThongBao("Cập nhật sinh viên thành công", 3000, "bg-warning")
   formQLSV.reset()
   document.getElementById("txtMaSV").readOnly = false
   // cho phép input mã SV được thực hiện nhập dữ liệu
